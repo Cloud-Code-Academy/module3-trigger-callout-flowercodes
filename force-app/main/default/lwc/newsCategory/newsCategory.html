@@ -1,0 +1,21 @@
+<template>
+    <div>
+        <!-- Category Filter -->
+        <lightning-combobox
+            name="categoryFilter"
+            label="Filter by Category"
+            value={selectedCategory}
+            options={categoryOptions}
+            onchange={handleCategoryChange}>
+        </lightning-combobox>
+    </div>
+    <div style="height: 300px;">
+        <lightning-datatable
+        key-field="Id"
+        hide-checkbox-column = "true"
+        columns={columns}
+        data={filteredData}>
+        </lightning-datatable>
+    </div>
+    
+</template>
