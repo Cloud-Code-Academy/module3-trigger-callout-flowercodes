@@ -22,8 +22,14 @@ public with sharing class NewsAPIService {
         // - Build the request URL
         // - Make the callout
         // - Parse and return the response
-        
-        return null;
+        Http h = new Http();
+        String endpoint = (API_NAMED_CREDENTIAL + API_ENDPOINT + '?category=' + category 
+        + '&pageSize=' + pageSize +
+         '&page=' + page);
+
+        HttpResponse res = NewsAPIService.makeCallout(endpoint);
+        NewsAPIResponse parsedResponse = NewsAPIService.parseResponse(res.getBody());
+        return parsedResponse;
     }
     
     /**
@@ -31,13 +37,23 @@ public with sharing class NewsAPIService {
      * @param endpoint The full URL with parameters
      * @return HttpResponse The HTTP response
      */
-    private static HttpResponse makeCallout(String endpoint) {
+    public static HttpResponse makeCallout(String endpoint) {
         // TODO: Implement HTTP callout
         // - Create and configure HTTP request
         // - Make the callout
         // - Handle exceptions
-        
-        return null;
+        Http h = new Http();
+
+        HttpRequest req = new HTTPRequest();
+        req.setEndpoint(endpoint);
+        req.setMethod('GET');
+        HttpResponse res = h.send(req);
+        if (res.getStatusCode() == 200) {
+            System.debug(res.getBody());
+            return res;
+        } else {
+            throw new NewsAPIException('Error fetching headlines: ' + res.getStatus());
+        }
     }
     
     /**
@@ -49,8 +65,12 @@ public with sharing class NewsAPIService {
         // TODO: Implement JSON parsing
         // - Deserialize JSON to NewsAPIResponse
         // - Handle exceptions
-        
-        return null;
+        NewsAPIResponse response = (NewsAPIResponse) JSON.deserialize(jsonResponse, NewsAPIResponse.class);
+        if (response != null) {
+            return response;
+        } else {
+            throw new NewsAPIException('Error parsing response');
+        }
     }
     
     /**

@@ -3,20 +3,7 @@ private class NewsCategoryTriggerTest {
     
     @TestSetup
     static void setup() {
-        // Create test data
-        List<News_Category__c> categories = new List<News_Category__c>{
-            new News_Category__c(
-                Name = 'Technology',
-                Sync__c = true,
-                Pages__c = 1
-            ),
-            new News_Category__c(
-                Name = 'Business',
-                Sync__c = false,
-                Pages__c = 1
-            )
-        };
-        insert categories;
+        
     }
     
     @IsTest
@@ -80,9 +67,13 @@ private class NewsCategoryTriggerTest {
     
     @IsTest
     static void testUpdateWithSyncChangeToTrue() {
-        // Set up the mock for API callout
+       
+        Test.startTest();        // Set up the mock for API callout
         Test.setMock(HttpCalloutMock.class, NewsAPIMock.createSuccessMock());
-        
+        //Insert testCategory
+        News_Category__c testCategory = new News_Category__c(Name = 'Business', Sync__c = false, Pages__c = 1);
+        insert testCategory;
+
         // Get the business category
         News_Category__c category = [
             SELECT Id, Sync__c 
@@ -90,11 +81,10 @@ private class NewsCategoryTriggerTest {
             WHERE Name = 'Business'
         ];
         
-        Test.startTest();
-        
         // Update Sync__c to true
         category.Sync__c = true;
         update category;
+
         
         Test.stopTest();
         
@@ -119,14 +109,18 @@ private class NewsCategoryTriggerTest {
     
     @IsTest
     static void testUpdateWithNoRelevantChanges() {
+        
+        Test.startTest();
+        //Insert testCategory
+        News_Category__c testCategory = new News_Category__c(Name = 'Business', Sync__c = false, Pages__c = 1);
+        insert testCategory;
+
         // Get the business category
         News_Category__c category = [
             SELECT Id, Sync__c, Pages__c 
             FROM News_Category__c 
             WHERE Name = 'Business'
         ];
-        
-        Test.startTest();
         
         // Update with no changes to Sync__c or Pages__c
         category.Name = 'Business Updated';
